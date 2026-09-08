@@ -1,17 +1,36 @@
-# belobelo
+# Belô Belô
 
-A new Flutter project.
+## Estrutura
 
-## Getting Started
+```
+lib/
+├── main.dart                    # entry point
+├── models/                      # classes
+│   ├── player_model.dart
+│   ├── question_model.dart
+│   └── boardsquare_model.dart
+|   └── ...
+├── data/                        # listas estáticas / mocks
+│   ├── player_data.dart
+│   ├── question_data.dart
+│   └── boardsquare_data.dart
+|   └── ...
+└── widgets/                     # UI
+    ├── player_widget.dart
+    ├── dice_widget.dart
+    ├── boardsquare_widget.dart
+    └── ...
+```
 
-This project is a starting point for a Flutter application.
+Padrão para cada entidade: `model` define a classe/enum, `data` expõe uma
+lista estática (`final List<X> xs = [...]`) com os valores de exemplo/mock, e
+`widget` recebe uma instância do model e sabe desenhá-la. Ao adicionar uma
+nova entidade (ex.: cartas, tabuleiro em si), siga o mesmo trio
+model → data → widget.
 
-A few resources to get you started if this is your first Flutter project:
+## Rodando o projeto
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run
+```
