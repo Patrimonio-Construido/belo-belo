@@ -2,65 +2,65 @@ import 'package:flutter/material.dart';
 
 import 'package:belobelo/models/boardsquare_model.dart';
 
-extension _BoardSpaceStyle on BoardSpaceType {
+extension _BoardSquareStyle on BoardSquareType {
   Color get color {
     switch (this) {
-      case BoardSpaceType.start:
+      case BoardSquareType.start:
         return const Color(0xFF7A9B6E); // muted sage green
-      case BoardSpaceType.end:
+      case BoardSquareType.end:
         return const Color(0xFF4A3F5C); // deep charcoal-plum
-      case BoardSpaceType.normal:
+      case BoardSquareType.normal:
         return const Color(0xFF8A7CA8); // dusty mauve/purple
-      case BoardSpaceType.bonus:
+      case BoardSquareType.bonus:
         return const Color(0xFFC9A961); // warm gold/olive
-      case BoardSpaceType.penalty:
+      case BoardSquareType.penalty:
         return const Color(0xFFC97B5A); // muted terracotta
     }
   }
 
   IconData? get glyph {
     switch (this) {
-      case BoardSpaceType.start:
+      case BoardSquareType.start:
         return Icons.flag;
-      case BoardSpaceType.end:
+      case BoardSquareType.end:
         return Icons.flag;
-      case BoardSpaceType.normal:
+      case BoardSquareType.normal:
         return null;
-      case BoardSpaceType.bonus:
+      case BoardSquareType.bonus:
         return Icons.star;
-      case BoardSpaceType.penalty:
+      case BoardSquareType.penalty:
         return Icons.priority_high;
     }
   }
 
   double get sizeMultiplier {
     switch (this) {
-      case BoardSpaceType.start:
-      case BoardSpaceType.end:
+      case BoardSquareType.start:
+      case BoardSquareType.end:
         return 1.3;
-      case BoardSpaceType.normal:
-      case BoardSpaceType.bonus:
-      case BoardSpaceType.penalty:
+      case BoardSquareType.normal:
+      case BoardSquareType.bonus:
+      case BoardSquareType.penalty:
         return 1.0;
     }
   }
 }
 
-class BoardSpaceWidget extends StatelessWidget {
-  final BoardSpace boardSpace;
+class BoardSquareWidget extends StatelessWidget {
+  final BoardSquare boardSquare;
   final double size;
 
-  const BoardSpaceWidget({
+  const BoardSquareWidget({
     super.key,
-    required this.boardSpace,
+    required this.boardSquare,
     this.size = 36,
   });
 
   @override
   Widget build(BuildContext context) {
-    final color = boardSpace.type.color;
-    final glyph = boardSpace.type.glyph;
-    final tileSize = size * boardSpace.type.sizeMultiplier;
+    final color = boardSquare.type.color;
+    final glyph = boardSquare.type.glyph;
+    final tileSize = size * boardSquare.type.sizeMultiplier;
 
     return Container(
       width: tileSize,

@@ -64,10 +64,10 @@ class MainPage extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (final boardSpace in boardSpaces)
+                for (final boardSquare in boardSquares)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: BoardSpaceWidget(boardSpace: boardSpace)
+                    child: BoardSquareWidget(boardSquare: boardSquare)
                   ),
               ],
             ),

@@ -1,4 +1,4 @@
-enum BoardSpaceType {
+enum BoardSquareType {
   start,
   end,
   normal,
@@ -6,12 +6,12 @@ enum BoardSpaceType {
   penalty,
 }
 
-class BoardSpace {
-  final BoardSpaceType type;
+class BoardSquare {
+  final BoardSquareType type;
   final double xPercentage;
   final double yPercentage;
 
-  BoardSpace({
+  BoardSquare({
     required this.type,
     required this.xPercentage,
     required this.yPercentage,
