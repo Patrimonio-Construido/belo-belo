@@ -2,6 +2,21 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' as v_math;
 
+final Map<int, v_math.Vector3> _faceNormals = {
+  1: v_math.Vector3(0, 0, 1),
+  6: v_math.Vector3(0, 0, -1),
+  2: v_math.Vector3(0, 1, 0),
+  5: v_math.Vector3(0, -1, 0),
+  3: v_math.Vector3(1, 0, 0),
+  4: v_math.Vector3(-1, 0, 0),
+};
+
+const List<(int, int)> _cubeEdges = [
+  (1, 2), (1, 3), (1, 4), (1, 5),
+  (6, 2), (6, 3), (6, 4), (6, 5),
+  (2, 3), (3, 5), (5, 4), (4, 2),
+];
+
 const Map<int, List<Alignment>> _pipLayouts = {
   1: [Alignment.center],
   2: [Alignment.topLeft, Alignment.bottomRight],
@@ -33,7 +48,7 @@ class DiceWidget3D extends StatefulWidget {
   final double size;
   final ValueChanged<int>? onRollEnd;
 
-  const DiceWidget3D({super.key, this.size = 100, this.onRollEnd});
+  const DiceWidget3D({super.key, this.size = 72, this.onRollEnd});
 
   @override
   State<DiceWidget3D> createState() => _DiceWidget3DState();
@@ -45,21 +60,20 @@ class _DiceWidget3DState extends State<DiceWidget3D>
   late Animation<double> _animation;
   final _random = Random();
 
-  // Face rotation required so each number sits on TOP (facing +Y)
   static const Map<int, List<double>> _targetAngles = {
-    1: [-pi / 2, 0.0, 0.0],
-    2: [0.0, 0.0, 0.0],
-    3: [0.0, 0.0, -pi / 2],
-    4: [0.0, 0.0, pi / 2],
-    5: [pi, 0.0, 0.0],
-    6: [pi / 2, 0.0, 0.0],
+    1: [0.0, 0.0, 0.0],
+    2: [pi / 2, 0.0, 0.0],
+    3: [0.0, -pi / 2, 0.0],
+    4: [0.0, pi / 2, 0.0],
+    5: [-pi / 2, 0.0, 0.0],
+    6: [pi, 0.0, 0.0],
   };
 
   int _rolledValue = 1;
   bool _isRolling = false;
 
-  double _startX = -pi / 2, _startY = 0.0, _startZ = 0.0;
-  double _targetX = -pi / 2, _targetY = 0.0, _targetZ = 0.0;
+  double _startX = 0.0, _startY = 0.0, _startZ = 0.0;
+  double _targetX = 0.0, _targetY = 0.0, _targetZ = 0.0;
 
   @override
   void initState() {
@@ -103,12 +117,16 @@ class _DiceWidget3DState extends State<DiceWidget3D>
     setState(() {
       _isRolling = true;
       _rolledValue = nextValue;
-      _targetX = _startX + spinsX + baseTarget[0];
-      _targetY = _startY + spinsY + baseTarget[1];
-      _targetZ = _startZ + spinsZ + baseTarget[2];
+      _targetX = _alignedTarget(_startX, baseTarget[0]) + spinsX;
+      _targetY = _alignedTarget(_startY, baseTarget[1]) + spinsY;
+      _targetZ = _alignedTarget(_startZ, baseTarget[2]) + spinsZ;
     });
 
     _controller.forward(from: 0.0);
+  }
+
+  static double _alignedTarget(double start, double target) {
+    return start + (target - start) % (2 * pi);
   }
 
   @override
@@ -225,28 +243,30 @@ class _Cube3D extends StatelessWidget {
     // Painter's algorithm sort
     visibleFaces.sort((a, b) => a.depth.compareTo(b.depth));
 
-    const baseColor = Color(0xFFF9F6EE);
+    const baseColor = Color(0xFFFFFDF5);
+
+    final edgeBevels = _buildEdgeBevels(visibleFaces, half, totalMatrix, baseColor);
 
     return Stack(
       alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
-        // Solid backing gap fillers during the 3D phase
-        for (final item in visibleFaces)
-          Transform(
-            alignment: Alignment.center,
-            transform: item.transform,
-            child: Container(
-              width: size,
-              height: size,
-              color: Color.fromRGBO(
-                (baseColor.r * 255 * (item.shadeFactor * 0.88)).toInt(),
-                (baseColor.g * 255 * (item.shadeFactor * 0.88)).toInt(),
-                (baseColor.b * 255 * (item.shadeFactor * 0.88)).toInt(),
-                1.0,
+        if (visibleFaces.length > 1)
+          for (final item in visibleFaces)
+            Transform(
+              alignment: Alignment.center,
+              transform: item.transform,
+              child: Container(
+                width: size,
+                height: size,
+                color: Color.fromRGBO(
+                  (baseColor.r * 255 * item.shadeFactor).toInt(),
+                  (baseColor.g * 255 * item.shadeFactor).toInt(),
+                  (baseColor.b * 255 * item.shadeFactor).toInt(),
+                  1.0,
+                ),
               ),
             ),
-          ),
 
         // Rounded face caps
         for (final item in visibleFaces)
@@ -259,8 +279,66 @@ class _Cube3D extends StatelessWidget {
               shadeFactor: item.shadeFactor,
             ),
           ),
+        ...edgeBevels,
       ],
     );
+  }
+
+  static List<Widget> _buildEdgeBevels(
+    List<_RenderFace> visibleFaces,
+    double half,
+    Matrix4 totalMatrix,
+    Color baseColor,
+  ) {
+    final visibleByIndex = {for (final f in visibleFaces) f.faceIndex: f};
+    final bevels = <Widget>[];
+
+    for (final (a, b) in _cubeEdges) {
+      final faceA = visibleByIndex[a];
+      final faceB = visibleByIndex[b];
+      if (faceA == null || faceB == null) continue;
+
+      final normalA = _faceNormals[a]!;
+      final normalB = _faceNormals[b]!;
+      final edgeCenter = normalA * half + normalB * half;
+      final bisector = (normalA + normalB)..normalize();
+      final edgeDir = normalA.cross(normalB)..normalize();
+      final basisY = (bisector.cross(edgeDir))..normalize();
+
+      final edgeBase = Matrix4.columns(
+        v_math.Vector4(edgeDir.x, edgeDir.y, edgeDir.z, 0),
+        v_math.Vector4(basisY.x, basisY.y, basisY.z, 0),
+        v_math.Vector4(bisector.x, bisector.y, bisector.z, 0),
+        v_math.Vector4(edgeCenter.x, edgeCenter.y, edgeCenter.z, 1),
+      );
+
+      final baseSize = half * 2 - 0.5;
+      final thickness = baseSize * 0.05;
+      final size = baseSize + baseSize * 0.06;
+      final shade = (faceA.shadeFactor + faceB.shadeFactor) / 2;
+
+      bevels.add(
+        Transform(
+          alignment: Alignment.center,
+          transform: totalMatrix * edgeBase,
+          child: Container(
+            width: size,
+            height: thickness,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(
+                (baseColor.r * 255 * shade).toInt(),
+                (baseColor.g * 255 * shade).toInt(),
+                (baseColor.b * 255 * shade).toInt(),
+                1.0,
+              ),
+              borderRadius: BorderRadius.circular(thickness / 2),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return bevels;
   }
 }
 
@@ -297,8 +375,9 @@ class _DiceFace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pipSize = size * 0.17;
-    const baseColor = Color(0xFFF9F6EE);
+    final pipSize = size * 0.14;
+    const baseColor = Color(0xFFFFFDF5);
+    const pipColor = Colors.black87;
 
     return Container(
       width: size,
@@ -310,21 +389,18 @@ class _DiceFace extends StatelessWidget {
           (baseColor.b * 255 * shadeFactor).toInt(),
           1.0,
         ),
-        borderRadius: BorderRadius.circular(size * 0.22),
-        border: Border.all(
-          color: Colors.black.withValues(alpha: 0.12),
-          width: 1.0,
-        ),
+        borderRadius: BorderRadius.circular(size * 0.12),
+        border: Border.all(color: Colors.black12, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(size * 0.16),
+        padding: EdgeInsets.all(size * 0.18),
         child: Stack(
           children: [
             for (final alignment in _pipLayouts[value]!)
@@ -334,20 +410,13 @@ class _DiceFace extends StatelessWidget {
                   width: pipSize,
                   height: pipSize,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1B1B1B),
+                    color: Color.fromRGBO(
+                      (pipColor.r * 255 * shadeFactor).toInt(),
+                      (pipColor.g * 255 * shadeFactor).toInt(),
+                      (pipColor.b * 255 * shadeFactor).toInt(),
+                      1.0,
+                    ),
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.25 * shadeFactor),
-                        offset: const Offset(-0.8, -0.8),
-                        blurRadius: 0.5,
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        offset: const Offset(1.0, 1.0),
-                        blurRadius: 1.0,
-                      ),
-                    ],
                   ),
                 ),
               ),
