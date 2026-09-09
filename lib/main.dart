@@ -46,6 +46,7 @@ class MainPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             DiceWidget3D(
+              size: 100, //default = 100
               onRollEnd: (value) { /// callback que retorna o valor do dado
                 debugPrint('rolled $value');
               },
