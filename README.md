@@ -34,3 +34,53 @@ model → data → widget.
 flutter pub get
 flutter run
 ```
+## To-do
+
+- [ ] Tela Inicial
+  - [ ] Widgets dos botões
+  - [ ] Botão para Jogar, Créditos
+- [ ] Tela Créditos
+- [ ] Tela Jogo
+  - [ ] Montar a HUD
+  - [ ] Tabuleiro
+  - [ ] Organizar as casas do tabuleiro
+  - [ ] Animação de passar a vez
+  - [ ] Animação de rolar o dado
+  - [ ] Animação andar o jogador
+  - [ ] Animação de ganhar o jogo
+  - [ ] Música de fundo
+  - [ ] Som de rodar dado
+  - [ ] Som de andar o jogador
+  - [ ] Som de ganhar o jogo
+  - [ ] Som de passar a vez
+- [ ] Tela de Quiz
+  - [ ] Widget de temporizador
+  - [ ] Widget de pergunta/resposta
+  - [ ] Som de acerto/erro
+  - [ ] Música do quiz
+
+## Créditos
+
+Coordenação:
+- Profª. Dra. Gláucia Nolasco de Almeida Mello
+- Profª. Dra. Cynara Fidler Bremer
+
+Desenvolvimento:
+
+- [Felipe Guerzoni Martins Flôres Maia](https://github.com/flp2113)
+- [Alex de Castro Mendes Marques](https://github.com/AlexMarques00)
+
+Texto:
+
+- Camila Mara de Brito Bomfim
+- Dyana Virgínia Soares Madureira
+- Maria Clara Lara Ferreira
+
+Diagramação:
+
+- Camila Mara de Brito Bomfim
+- Clara Brunialti Godard
+
+Ilustração:
+
+- Estevam Gomes
