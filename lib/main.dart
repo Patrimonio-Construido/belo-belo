@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:belobelo/data/player_data.dart';
 import 'package:belobelo/widgets/dice_widget.dart';
 import 'package:belobelo/widgets/player_widget.dart';
+import 'package:belobelo/widgets/timer_widget.dart';
 
 void main() {
   // Forçar a orientação de tela horizontal
@@ -49,6 +50,12 @@ class MainPage extends StatelessWidget {
               size: 72,
               onRollEnd: (value) { /// callback que retorna o valor do dado
                 debugPrint('rolled $value');
+              },
+            ),
+            const SizedBox(height: 24),
+            TimerWidget(
+              onTimeUp: () { /// callback que é chamado quando o tempo acaba
+                debugPrint('time is up');
               },
             ),
             const SizedBox(height: 24),
