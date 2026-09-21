@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:belobelo/data/player_data.dart';
+import 'package:belobelo/data/question_data.dart';
+import 'package:belobelo/models/question_model.dart';
+import 'package:belobelo/screens/quiz_screen.dart';
 import 'package:belobelo/widgets/dice_widget.dart';
 import 'package:belobelo/widgets/player_widget.dart';
-import 'package:belobelo/widgets/timer_widget.dart';
 
 void main() {
   // Forçar a orientação de tela horizontal
@@ -36,12 +38,27 @@ class Game extends StatelessWidget {
   }
 }
 
+/// Tela de demonstração 1/3: dado.
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Demo 1/3 — Dado'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            tooltip: 'Próxima demo',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const PlayersDemoPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -52,13 +69,38 @@ class MainPage extends StatelessWidget {
                 debugPrint('rolled $value');
               },
             ),
-            const SizedBox(height: 24),
-            TimerWidget(
-              onTimeUp: () { /// callback que é chamado quando o tempo acaba
-                debugPrint('time is up');
-              },
-            ),
-            const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Tela de demonstração 2/3: jogadores e casas do tabuleiro.
+class PlayersDemoPage extends StatelessWidget {
+  const PlayersDemoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Demo 2/3 — Jogadores e Tabuleiro'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            tooltip: 'Próxima demo',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const QuizDemoPage()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -83,6 +125,40 @@ class MainPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Tela de demonstração 3/3: timer e pergunta/resposta do quiz.
+class QuizDemoPage extends StatefulWidget {
+  const QuizDemoPage({super.key});
+
+  @override
+  State<QuizDemoPage> createState() => _QuizDemoPageState();
+}
+
+class _QuizDemoPageState extends State<QuizDemoPage> {
+  late final Question _question;
+
+  @override
+  void initState() {
+    super.initState();
+    _question = getRandomQuestionAndPop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return QuizScreen(
+      backgroundImagePath: 'assets/images/tabuleiro/tabuleiro.jpeg',
+      placeName: 'Praça da Liberdade',
+      question: _question,
+      player: players.first,
+      onAnswered: (correct) { /// callback que retorna se acertou
+        debugPrint('answered correctly: $correct');
+      },
+      onTimeUp: () { /// callback que é chamado quando o tempo acaba
+        debugPrint('time is up');
+      },
     );
   }
 }

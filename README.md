@@ -45,7 +45,7 @@ flutter run
   - [ ] Tabuleiro
   - [ ] Organizar as casas do tabuleiro
   - [ ] Animação de passar a vez
-  - [ ] Animação de rolar o dado
+  - [x] Animação de rolar o dado
   - [ ] Animação andar o jogador
   - [ ] Animação de ganhar o jogo
   - [ ] Música de fundo
@@ -54,9 +54,14 @@ flutter run
   - [ ] Som de ganhar o jogo
   - [ ] Som de passar a vez
 - [ ] Tela de Quiz
-  - [ ] Widget de temporizador
-  - [ ] Widget de pergunta/resposta
-  - [ ] Som de acerto/erro
+  - [x] Widget de temporizador
+  - [x] Widget de pergunta/resposta
+  - [ ] Mapear casa do tabuleiro → imagem do local (fundo do Quiz)
+  - [x] Som de acerto/erro
+  - [ ] Efeito visual (blur/escurecer fundo + imagem de destaque) de acerto
+  - [ ] Efeito visual (blur/escurecer fundo + imagem de destaque) de erro
+  - [ ] Efeito visual (blur/escurecer fundo + imagem de destaque) de tempo esgotado
+  - [ ] Som de tempo esgotado
   - [ ] Música do quiz
 
 ## Créditos
