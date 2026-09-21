@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:belobelo/models/credits_section_model.dart';
 
-/// Heading + stacked name list, no per-name label (e.g. "Coordenação").
 class CreditsHeadingWidget extends StatelessWidget {
   final CreditsSection section;
   final Color color;
@@ -41,7 +40,6 @@ class CreditsHeadingWidget extends StatelessWidget {
   }
 }
 
-/// Fixed-width bold "label:" beside a stacked names column (e.g. "Texto:").
 class CreditsRoleRowWidget extends StatelessWidget {
   final CreditsSection section;
   final Color color;

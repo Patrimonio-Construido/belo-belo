@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:belobelo/data/credits_section_data.dart';
 import 'package:belobelo/widgets/credits_section_widget.dart';
 
-/// Ink color sampled from the reference design; used for all text and logos
-/// on this screen so it reads as one cohesive institutional credits page.
 const _ink = Color(0xFF002F6F);
 
 class CreditsScreen extends StatefulWidget {
@@ -106,8 +104,6 @@ class _CreditsContent extends StatelessWidget {
             const SizedBox(width: 32),
             Expanded(
               child: Padding(
-                // Aligns with "Projeto Patrimônio Construído", not the
-                // smaller "Realização" caption above it.
                 padding: const EdgeInsets.only(top: 24),
                 child: CreditsHeadingWidget(
                   section: coordenacaoSection,
@@ -199,8 +195,6 @@ class _RealizacaoBlock extends StatelessWidget {
   }
 }
 
-/// Recolors a white-on-transparent logo asset to [_ink] so it reads clearly
-/// against the light background, without needing a re-exported asset.
 class _TintedLogo extends StatelessWidget {
   final String assetPath;
   final double height;
