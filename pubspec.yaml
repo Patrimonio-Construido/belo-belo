@@ -28,6 +28,7 @@ flutter:
     - assets/images/gato/
     - assets/images/menina/
     - assets/images/tabuleiro/
+    - assets/images/creditos/
     - assets/sounds/quiz/
 
   # To add custom fonts to your application, add a fonts section here,

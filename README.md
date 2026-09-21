@@ -39,7 +39,7 @@ flutter run
 - [ ] Tela Inicial
   - [ ] Widgets dos botões
   - [ ] Botão para Jogar, Créditos
-- [ ] Tela Créditos
+- [x] Tela Créditos
 - [ ] Tela Jogo
   - [ ] Montar a HUD
   - [ ] Tabuleiro

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:belobelo/data/player_data.dart';
 import 'package:belobelo/data/question_data.dart';
 import 'package:belobelo/models/question_model.dart';
+import 'package:belobelo/screens/credits_screen.dart';
 import 'package:belobelo/screens/quiz_screen.dart';
 import 'package:belobelo/widgets/dice_widget.dart';
 import 'package:belobelo/widgets/player_widget.dart';
@@ -48,6 +49,15 @@ class MainPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Demo 1/3 — Dado'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.stars),
+            tooltip: 'Créditos',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CreditsScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.arrow_forward),
             tooltip: 'Próxima demo',
